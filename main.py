@@ -38,18 +38,25 @@ def check_shape(text):
         raise SystemExit("entry must be 1-200 chars")
     if not text.strip():
         raise SystemExit("entry must not be whitespace only")
+    if text != text.strip():
+        raise SystemExit("entry must not start or end with whitespace")
     if "\n" in text or "\r" in text:
         raise SystemExit("entry must be a single line")
     return text
 
 
-def main():
-    text = check_shape(ENTRY)
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+def write_entry(text, out_dir):
+    """Write the validated entry byte-exact to <out_dir>/entry.txt."""
+    text = check_shape(text)
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, "entry.txt"), "w",
               encoding="utf-8", newline="") as f:
         f.write(text)
+
+
+def main():
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+    write_entry(ENTRY, out_dir)
 
 
 if __name__ == "__main__":
